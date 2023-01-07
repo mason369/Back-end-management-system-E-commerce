@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2023-01-07)
+
+
+### Features
+
+* upadte ([85d5ca6](https://github.com/mason369/Back-end-management-system-E-commerce/commit/85d5ca69eeaed05236f3b4804e6be67342f7f7e5))
+
 ## [1.0.6](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.5...v1.0.6) (2022-12-29)
 
 
