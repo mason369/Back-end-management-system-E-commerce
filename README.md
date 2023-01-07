@@ -76,7 +76,7 @@
 
 ## 如何贡献
 
-非常欢迎你的加入！[提一个 Issue](https://github.com/School-of-Automation-Engineering/Back-end-management-system-E-commerce/issues) 或者提交一个
+非常欢迎你的加入！[提一个 Issue](https://github.com/mason369/Back-end-management-system-E-commerce/issues) 或者提交一个
 Pull Request。
 
 Back-end-management-system-E-commerce 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
@@ -135,8 +135,7 @@ JavaScript 和 Web 开发人员的最佳选择，具有几乎可支持任何编�
 ## 本地部署
 
 ``` bash
-//出于Github缓存和最新依赖考虑，我们默认不提供node_modules的文件夹以及依赖项
-//然后安装依赖，通过以下命令
+//安装依赖，通过以下命令
 # npm install
 
 //serve 服务器测试
