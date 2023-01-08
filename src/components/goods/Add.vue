@@ -41,7 +41,12 @@
 				label-width="100px"
 				label-position="top"
 			>
-				<el-tabs v-model="activeIndex" :tab-position="'left'">
+				<el-tabs
+					v-model="activeIndex"
+					:tab-position="'left'"
+					:before-leave="beforeTabLeave"
+					@tab-click="tabClicked"
+				>
 					<el-tab-pane label="基本信息" name="0">
 						<el-form-item label="商品名称" prop="goods_name">
 							<el-input v-model="addForm.goods_name"></el-input>
@@ -64,18 +69,71 @@
 							></el-cascader>
 						</el-form-item>
 					</el-tab-pane>
-					<el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
-					<el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
-					<el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
-					<el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+					<el-tab-pane label="商品参数" name="1">
+						<!--渲染表单的Item项-->
+						<el-form-item
+							v-for="item in manyTableData"
+							:key="item.attr_id"
+							:label="item.attr_name"
+						>
+							<!-- 复选框组 -->
+							<el-checkbox-group v-model="item.attr_vals">
+								<el-checkbox
+									:label="cb"
+									v-for="(cb, i) in item.attr_vals"
+									:key="i"
+									border
+								></el-checkbox>
+							</el-checkbox-group>
+						</el-form-item>
+					</el-tab-pane>
+					<el-tab-pane label="商品属性" name="2">
+						<!--渲染表单的Item项-->
+						<el-form-item
+							v-for="item in onlyTableData"
+							:key="item.attr_id"
+							:label="item.attr_name"
+						>
+							<!-- 输入框 -->
+							<el-input v-model="item.attr_vals"></el-input>
+						</el-form-item>
+					</el-tab-pane>
+					<el-tab-pane label="商品图片" name="3">
+						<el-upload
+							:action="uploadUrl"
+							:on-preview="handlePreview"
+							:on-remove="handleRemove"
+							:headers="headers"
+							list-type="picture"
+							:on-success="handleSuccess"
+						>
+							<el-button size="small" type="primary">点击上传</el-button>
+						</el-upload>
+					</el-tab-pane>
+					<el-tab-pane label="商品内容" name="4">
+						<!-- 富文本编辑器 -->
+						<quill-editor
+							ref="myQuillEditor"
+							v-model="addForm.goods_introduce"
+						></quill-editor>
+						<!-- 添加商品按钮 -->
+						<br />
+						<el-button type="primary" @click="addGoods">添加商品</el-button>
+					</el-tab-pane>
 				</el-tabs>
 			</el-form>
 		</el-card>
 		<br />
+		<!-- 图片预览 -->
+		<el-dialog title="提示" :visible.sync="previewVisible" width="50%">
+			<img :src="previewPath" class="previewImg" />
+		</el-dialog>
 	</div>
 </template>
 
 <script>
+//lodash
+import _ from "lodash";
 export default {
 	data() {
 		return {
@@ -93,7 +151,11 @@ export default {
 				promote_end_date  : "",
 				goods_img         : "",
 				goods_imgs        : [],
-				goods_content     : ""
+				goods_content     : "",
+				pics              : [],
+				//商品描述
+				goods_introduce   : "",
+				attrs             : []
 			},
 			// 表单验证规则
 			addFormRules: {
@@ -109,7 +171,19 @@ export default {
 				label   : "cat_name",
 				value   : "cat_id",
 				children: "children"
-			}
+			},
+			//动态参数列表数据
+			manyTableData : [],
+			//静态属性列表数据
+			onlyTableData : [],
+			//上传图片的地址
+			uploadUrl     : "https://lianghj.top:8888/api/private/v1/upload",
+			//请求头
+			headers       : { Authorization: sessionStorage.getItem("token") },
+			//图片预览
+			previewPath   : "",
+			//图片预览的对话框
+			previewVisible: false
 		};
 	},
 	methods: {
@@ -127,12 +201,122 @@ export default {
 				this.$message.error("请选择三级分类");
 				this.addForm.goods_cat = [];
 			}
+		},
+		beforeTabLeave(activeName, oldActiveName) {
+			if (oldActiveName === "0" && this.addForm.goods_cat.length !== 3) {
+				this.$message.error("请选择三级分类");
+				return false;
+			}
+		},
+		async tabClicked() {
+			if (this.activeIndex === "1") {
+				const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: "many" }});
+
+				//获取失败
+				if (res.meta.status !== 200) {
+					return this.$message.error("获取商品参数失败");
+				}
+				res.data.forEach((item) => {
+					item.attr_vals =
+						item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
+				});
+				this.manyTableData = res.data;
+			}
+			else if (this.activeIndex === "2") {
+				const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: "only" }});
+
+				//获取失败
+				if (res.meta.status !== 200) {
+					return this.$message.error("获取静态属性失败");
+				}
+				res.data.forEach((item) => {
+					item.attr_vals =
+						item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
+				});
+				this.onlyTableData = res.data;
+			}
+		},
+		//处理图片预览效果
+		handlePreview(file) {
+			this.previewPath = file.response.data.url;
+			this.previewVisible = true;
+		},
+
+		//处理移除图片
+		handleRemove(file) {
+			const filePath = file.response.data.tmp_path;
+			const index = this.addForm.pics.findIndex((x) => x.pic === filePath);
+			this.addForm.pics.splice(index, 1);
+		},
+		//上传图片成功
+		// 1．拼接得到一个图片信息对象 2．将图片信息对象，push 到pics数组中
+		handleSuccess(res) {
+			const picInfo = {
+				//图片地址
+				pic: res.data.tmp_path
+			};
+			this.addForm.pics.push(picInfo);
+		},
+		//添加商品
+		async addGoods() {
+			//校验表单
+			this.$refs.addFormRef.validate(async(valid) => {
+				if (!valid) {
+					return this.$message.error("请完善商品信息");
+				}
+				//校验通过
+				const form = _.cloneDeep(this.addForm);
+				form.goods_cat = form.goods_cat.join(",");
+				//处理动态参数
+				this.manyTableData.forEach((item) => {
+					const newInfo = {
+						attr_id  : item.attr_id,
+						attr_sel : item.attr_sel,
+						attr_vals: item.attr_vals.join(" ")
+					};
+					this.addForm.attrs.push(newInfo);
+				});
+				// 处理静态属性
+				this.onlyTableData.forEach((item) => {
+					const newInfo = {
+						attr_id  : item.attr_id,
+						attr_sel : item.attr_sel,
+						attr_vals: item.attr_vals
+					};
+					this.addForm.attrs.push(newInfo);
+				});
+				form.attrs = this.addForm.attrs;
+				//发送请求
+				const {data: res} = await this.$http.post("goods", form);
+				//添加失败
+				if (res.meta.status !== 201) {
+					return this.$message.error("添加商品失败");
+				}
+				//添加成功
+				this.$message.success("添加商品成功");
+				await this.$router.push("/goods");
+			});
 		}
 	},
 	mounted() {
 		this.getCateList();
+	},
+	computed: {
+		cateId() {
+			if (this.addForm.goods_cat.length === 3) {
+				return this.addForm.goods_cat[2];
+			}
+			return null;
+		}
 	}
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.previewImg {
+	width: 100%;
+}
+.ql-editor {
+	min-height: 300px;
+}
+</style>

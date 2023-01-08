@@ -1,11 +1,32 @@
 # Changelog
 
-## 1.0.0 (2023-01-07)
+## [1.1.0](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.9...v1.1.0) (2023-01-07)
 
 
 ### Features
 
-* upadte ([85d5ca6](https://github.com/mason369/Back-end-management-system-E-commerce/commit/85d5ca69eeaed05236f3b4804e6be67342f7f7e5))
+* update add goods ([bc9e70f](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/bc9e70f322d23ffd7d9904aeddccf4b10cbe5e3c))
+
+## [1.0.9](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.8...v1.0.9) (2023-01-07)
+
+
+### update
+
+* 完善商品参数 ([443688b](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/443688b9a74553a0f819f0b6ca0c6fbca10edfcf))
+
+## [1.0.8](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.7...v1.0.8) (2023-01-05)
+
+
+### update
+
+* 更新商品分类 ([7ae11b4](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/7ae11b4fb64f1c35bb8504d239721cc803adb30e))
+
+## [1.0.7](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.6...v1.0.7) (2023-01-04)
+
+
+### update
+
+* 完善商品分类 ([7fa355f](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/7fa355f12a67ce6db0b913f334ce587cae3f821f))
 
 ## [1.0.6](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.5...v1.0.6) (2022-12-29)
 

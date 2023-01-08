@@ -51,11 +51,6 @@
 					width="90px"
 					label="商品重量"
 				></el-table-column>
-				<el-table-column
-					prop="goods_state"
-					width="90px"
-					label="商品状态"
-				></el-table-column>
 				<el-table-column prop="add_time" label="添加时间" width="160px">
 					<template v-slot="scope">
 						{{ scope.row.add_time | dateFormat }}
