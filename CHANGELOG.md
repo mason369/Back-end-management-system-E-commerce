@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/mason369/Back-end-management-system-E-commerce/compare/v1.0.0...v1.1.0) (2023-01-08)
+
+
+### Features
+
+* update ([e576cee](https://github.com/mason369/Back-end-management-system-E-commerce/commit/e576ceeb252f1d54ecdee417812945ee53848585))
+
 ## [1.1.0](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.9...v1.1.0) (2023-01-07)
 
 
